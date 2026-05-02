@@ -1,190 +1,135 @@
-import { useState } from 'react';
+import { ArrowRight, Heart, Star } from 'lucide-react'
+
+const productData = [
+	{
+		id: 1,
+		name: 'Nordic Lounge Chair',
+		price: 249.99,
+		image: 'https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=900&h=900&fit=crop',
+	},
+	{
+		id: 2,
+		name: 'Minimal Table Lamp',
+		price: 89.0,
+		image: 'https://images.unsplash.com/photo-1513506003901-1e6a229e2d15?w=900&h=900&fit=crop',
+	},
+	{
+		id: 3,
+		name: 'Ceramic Vase Set',
+		price: 64.5,
+		image: 'https://images.unsplash.com/photo-1612196808214-b40f04f2f617?w=900&h=900&fit=crop',
+	},
+	{
+		id: 4,
+		name: 'Soft Knit Throw',
+		price: 79.99,
+		image: 'https://images.unsplash.com/photo-1579656381226-5fc0f0100c3b?w=900&h=900&fit=crop',
+	},
+	{
+		id: 5,
+		name: 'Oak Coffee Table',
+		price: 319.0,
+		image: 'https://images.unsplash.com/photo-1533090481720-856c6e3c1fdc?w=900&h=900&fit=crop',
+	},
+	{
+		id: 6,
+		name: 'Wall Mirror Round',
+		price: 119.99,
+		image: 'https://images.unsplash.com/photo-1618220179428-22790b461013?w=900&h=900&fit=crop',
+	},
+	{
+		id: 7,
+		name: 'Marble Side Tray',
+		price: 54.0,
+		image: 'https://images.unsplash.com/photo-1503602642458-232111445657?w=900&h=900&fit=crop',
+	},
+	{
+		id: 8,
+		name: 'Scandinavian Shelf',
+		price: 189.0,
+		image: 'https://images.unsplash.com/photo-1493666438817-866a91353ca9?w=900&h=900&fit=crop',
+	},
+]
 
 function ProductListing() {
-	const [selectedFilter, setSelectedFilter] = useState('all');
-	const [sortBy, setSortBy] = useState('featured');
-
-	const products = [
-		{
-			id: 1,
-			name: 'Luna Ceramic Lamp',
-			category: 'LIGHTING',
-			price: 345.00,
-			image: 'https://images.unsplash.com/photo-1565182999555-2142d4d407b0?w=500&h=500&fit=crop',
-			isNew: false
-		},
-		{
-			id: 2,
-			name: 'Arco Dining Chair',
-			category: 'FURNITURE',
-			price: 580.00,
-			image: 'https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=500&h=500&fit=crop',
-			isNew: true
-		},
-		{
-			id: 3,
-			name: 'Heritage Wool Throw',
-			category: 'TEXTILES',
-			price: 190.00,
-			image: 'https://images.unsplash.com/photo-1577716453202-59e81cd43e27?w=500&h=500&fit=crop',
-			isNew: false
-		},
-		{
-			id: 4,
-			name: 'Terra Ceramic Set (5)',
-			category: 'DECOR',
-			price: 125.00,
-			image: 'https://images.unsplash.com/photo-1578500494198-246f612d03b3?w=500&h=500&fit=crop',
-			isNew: false
-		},
-		{
-			id: 5,
-			name: 'Linen Bedding Set',
-			category: 'TEXTILES',
-			price: 280.00,
-			image: 'https://images.unsplash.com/photo-1552321554-5fefe8c9ef14?w=500&h=500&fit=crop',
-			isNew: true
-		},
-		{
-			id: 6,
-			name: 'Minimalist Wall Clock',
-			category: 'DECOR',
-			price: 95.00,
-			image: 'https://images.unsplash.com/photo-1564466809058-bf4114d55352?w=500&h=500&fit=crop',
-			isNew: false
-		},
-		{
-			id: 7,
-			name: 'Oak Wood Bookshelf',
-			category: 'FURNITURE',
-			price: 450.00,
-			image: 'https://images.unsplash.com/photo-1585299676815-e21cc028cb29?w=500&h=500&fit=crop',
-			isNew: false
-		},
-		{
-			id: 8,
-			name: 'Ambient Table Lamp',
-			category: 'LIGHTING',
-			price: 220.00,
-			image: 'https://images.unsplash.com/photo-1565182999555-2142d4d407b0?w=500&h=500&fit=crop',
-			isNew: false
-		}
-	];
-
-	const filteredProducts = selectedFilter === 'all' 
-		? products 
-		: products.filter(p => p.category === selectedFilter);
-
-	const categories = ['all', 'LIGHTING', 'FURNITURE', 'TEXTILES', 'DECOR'];
-
 	return (
-		<div className="min-h-screen bg-white">
-			{/* Hero Section */}
-			<div className="bg-gradient-to-br from-slate-50 to-slate-100 px-4 py-16 sm:px-6 lg:px-8">
-				<div className="mx-auto max-w-7xl">
-					<h1 className="text-4xl font-bold tracking-tight text-slate-900 sm:text-5xl">
-						Curated Living
-					</h1>
-					<p className="mt-4 text-lg text-slate-600">
-						Timeless pieces designed for a peaceful, tactile environment. Explore our seasonal
-						selection of handcrafted essentials.
-					</p>
-				</div>
-			</div>
-
-			{/* Main Content */}
-			<div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
-				{/* Filter and Sort Section */}
-				<div className="mb-8 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-					<div className="flex items-center gap-4">
-						<span className="text-sm font-semibold text-slate-700">Filters</span>
-						<div className="flex flex-wrap gap-2">
-							{categories.map(cat => (
-								<button
-									key={cat}
-									onClick={() => setSelectedFilter(cat)}
-									className={`rounded-full px-4 py-2 text-xs font-medium transition ${
-										selectedFilter === cat
-											? 'bg-slate-900 text-white'
-											: 'bg-slate-100 text-slate-700 hover:bg-slate-200'
-									}`}
-								>
-									{cat.charAt(0).toUpperCase() + cat.slice(1)}
-								</button>
-							))}
+		<section className="px-4 py-10 sm:px-6 lg:px-8">
+			<div className="mx-auto max-w-7xl">
+				<div className="flex flex-col gap-8 rounded-[2rem] border border-white/10 bg-gradient-to-br from-slate-900/50 to-slate-950 p-6 shadow-[0_20px_60px_rgba(15,23,42,0.15)] backdrop-blur sm:p-8 lg:flex-row lg:items-end lg:justify-between">
+					<div className="max-w-2xl">
+						<p className="text-xs font-bold uppercase tracking-[0.35em] text-amber-300">Featured collection</p>
+						<h2 className="mt-3 text-3xl font-bold text-white sm:text-4xl">Home items with a polished, editorial feel</h2>
+						<p className="mt-4 text-base leading-7 text-slate-300">
+							A curated set of furniture and decor essentials for warm, modern interiors. Built to feel premium without feeling cold.
+						</p>
+					</div>
+					<div className="grid grid-cols-3 gap-3 text-center sm:min-w-[320px]">
+						<div className="rounded-2xl bg-gradient-to-br from-amber-300 to-orange-500 px-4 py-5 text-slate-950 shadow-lg shadow-amber-500/30">
+							<p className="text-2xl font-bold">48+</p>
+							<p className="mt-1 text-xs uppercase tracking-[0.2em] font-semibold">Products</p>
+						</div>
+					<div className="rounded-2xl bg-white/10 border border-white/20 px-4 py-5 text-white">
+							<p className="text-2xl font-bold text-amber-300">4.8</p>
+							<p className="mt-1 text-xs uppercase tracking-[0.2em] text-slate-400">Rating</p>
+						</div>
+						<div className="rounded-2xl bg-white/5 px-4 py-5 text-white border border-white/10">
+							<p className="text-2xl font-bold">2 Day</p>
+							<p className="mt-1 text-xs uppercase tracking-[0.2em] text-slate-400">Delivery</p>
 						</div>
 					</div>
-
-					<select
-						value={sortBy}
-						onChange={(e) => setSortBy(e.target.value)}
-						className="rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 transition hover:border-slate-400 focus:border-amber-400 focus:outline-none"
-					>
-						<option value="featured">Featured</option>
-						<option value="price-low">Price: Low to High</option>
-						<option value="price-high">Price: High to Low</option>
-						<option value="newest">Newest</option>
-					</select>
 				</div>
 
-				{/* Products Grid */}
-				<div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4">
-					{filteredProducts.map(product => (
-						<div key={product.id} className="group cursor-pointer">
-							{/* Product Image */}
-							<div className="relative mb-4 overflow-hidden rounded-lg bg-slate-200">
-								<img
-									src={product.image}
-									alt={product.name}
-									className="aspect-square w-full object-cover transition duration-300 group-hover:scale-105"
+				<div className="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-4">
+					{productData.map((product) => (
+						<article key={product.id} className="group overflow-hidden rounded-[1.75rem] border border-white/10 bg-gradient-to-br from-slate-900/50 to-slate-950 shadow-[0_20px_50px_rgba(15,23,42,0.1)] transition duration-300 hover:-translate-y-1 hover:border-white/20 hover:shadow-[0_25px_65px_rgba(15,23,42,0.2)]">
+							<div className="relative aspect-[4/4.1] overflow-hidden bg-slate-800">
+								<img 
+									src={product.image} 
+									alt={product.name} 
+									className="h-full w-full object-cover transition duration-500 group-hover:scale-110" 
 								/>
-								{product.isNew && (
-									<div className="absolute right-3 top-3 rounded-full bg-slate-700 px-3 py-1 text-xs font-semibold text-white">
-										New
-									</div>
-								)}
-								<button className="absolute bottom-3 right-3 rounded-full bg-white p-2 shadow-md transition hover:bg-slate-50">
-									<svg 
-										className="h-5 w-5 text-slate-700" 
-										fill="none" 
-										stroke="currentColor" 
-										viewBox="0 0 24 24"
+								<div className="absolute inset-0 bg-gradient-to-t from-slate-950/40 via-transparent to-transparent group-hover:from-slate-950/60 transition duration-300" />
+								
+								<div className="absolute inset-4 flex items-start justify-between opacity-0 transition duration-300 group-hover:opacity-100">
+									<span className="rounded-full bg-white/90 backdrop-blur px-3 py-1 text-xs font-semibold text-slate-700">Best seller</span>
+									<button 
+										type="button" 
+										className="flex h-10 w-10 items-center justify-center rounded-full bg-white/90 text-slate-900 backdrop-blur transition hover:bg-amber-300 hover:text-slate-950" 
+										aria-label={`Save ${product.name}`}
 									>
-										<path 
-											strokeLinecap="round" 
-											strokeLinejoin="round" 
-											strokeWidth={2} 
-											d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" 
-										/>
-									</svg>
+										<Heart className="h-5 w-5" />
+									</button>
+								</div>
+							</div>
+
+							<div className="space-y-4 p-5">
+								<div>
+									<div className="flex items-start justify-between gap-3">
+										<h3 className="text-lg font-bold text-white group-hover:text-amber-300 transition">{product.name}</h3>
+										<p className="shrink-0 text-lg font-bold text-amber-300">${product.price.toFixed(2)}</p>
+									</div>
+									<div className="mt-2 flex items-center gap-2 text-sm text-slate-400">
+										<Star className="h-4 w-4 fill-amber-400 text-amber-400" />
+										<span className="text-white">4.9</span>
+										<span>•</span>
+										<span>Free returns</span>
+									</div>
+								</div>
+
+								<button 
+									type="button" 
+									className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-gradient-to-r from-amber-300 to-amber-400 px-4 py-3 text-sm font-semibold text-slate-950 transition duration-200 hover:shadow-lg hover:shadow-amber-500/40 hover:-translate-y-0.5 active:translate-y-0"
+								>
+									View details
+									<ArrowRight className="h-4 w-4" />
 								</button>
 							</div>
-
-							{/* Product Info */}
-							<div>
-								<p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
-									{product.category}
-								</p>
-								<h3 className="mt-2 text-lg font-semibold text-slate-900">
-									{product.name}
-								</h3>
-								<p className="mt-2 text-xl font-bold text-slate-900">
-									${product.price.toFixed(2)}
-								</p>
-							</div>
-						</div>
+						</article>
 					))}
 				</div>
-
-				{/* Load More */}
-				<div className="mt-12 text-center">
-					<button className="rounded-lg border border-slate-300 px-8 py-3 font-semibold text-slate-900 transition hover:border-slate-400 hover:bg-slate-50">
-						Load More
-					</button>
-				</div>
 			</div>
-		</div>
-	);
+		</section>
+	)
 }
 
-export default ProductListing;
+export default ProductListing
