@@ -12,8 +12,9 @@ import NotFound from './pages/notFound'
 function App() {
   return (
     <div className="flex flex-col min-h-screen">
+      <a href="#main-content" className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 bg-amber-300 text-slate-950 rounded-md px-3 py-2">Skip to content</a>
       <Navbar />
-      <main className="flex-grow">
+      <main id="main-content" className="flex-grow">
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/home" element={<Navigate to="/" replace />} />

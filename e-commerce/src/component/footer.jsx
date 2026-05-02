@@ -97,15 +97,15 @@ function Footer() {
 							</button>
 						</form>
 						<div className="mt-6 flex items-center gap-3 text-slate-400">
-							<a href="#" aria-label="Website" className="rounded-full border border-white/10 p-2 transition hover:border-amber-300 hover:text-amber-300">
+							<Link to="/contact" aria-label="Website" className="rounded-full border border-white/10 p-2 transition hover:border-amber-300 hover:text-amber-300">
 								<Globe className="h-4 w-4" />
-							</a>
-							<a href="#" aria-label="Messages" className="rounded-full border border-white/10 p-2 transition hover:border-amber-300 hover:text-amber-300">
+							</Link>
+							<Link to="/contact" aria-label="Messages" className="rounded-full border border-white/10 p-2 transition hover:border-amber-300 hover:text-amber-300">
 								<MessageCircle className="h-4 w-4" />
-							</a>
-							<a href="#" aria-label="Share" className="rounded-full border border-white/10 p-2 transition hover:border-amber-300 hover:text-amber-300">
+							</Link>
+							<Link to="/contact" aria-label="Share" className="rounded-full border border-white/10 p-2 transition hover:border-amber-300 hover:text-amber-300">
 								<Share2 className="h-4 w-4" />
-							</a>
+							</Link>
 						</div>
 					</div>
 				</div>
