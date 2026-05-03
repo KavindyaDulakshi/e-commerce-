@@ -1,9 +1,12 @@
 import { ArrowRight, Heart, MapPin, Package, Shield, ShoppingBag, Truck } from 'lucide-react'
 import { Link } from 'react-router-dom'
+import { useState } from 'react'
+import { supabase } from '../lib/supabaseClient'
 
-const cartItems = [
+const initialCart = [
 	{
 		id: 1,
+		product_id: 1,
 		name: 'Nordic Lounge Chair',
 		price: 249.99,
 		quantity: 1,
@@ -11,6 +14,7 @@ const cartItems = [
 	},
 	{
 		id: 2,
+		product_id: 2,
 		name: 'Minimal Table Lamp',
 		price: 89.0,
 		quantity: 2,
@@ -18,9 +22,47 @@ const cartItems = [
 	},
 ]
 
-const cartTotal = cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0)
-
 function Cart() {
+	const [cartItems, setCartItems] = useState(initialCart)
+	const cartTotal = cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0)
+	const [loading, setLoading] = useState(false)
+	const [error, setError] = useState(null)
+	const [success, setSuccess] = useState(null)
+
+	const handleCheckout = async () => {
+		setLoading(true)
+		setError(null)
+		setSuccess(null)
+
+		try {
+			const session = (await supabase.auth.getSession()).data.session
+			const user = session?.user
+			if (!user) throw new Error('You must be logged in to place an order')
+
+			const items = cartItems.map((it) => ({ product_id: it.product_id, quantity: it.quantity, unit_price: it.price }))
+			const total_price = parseFloat((cartTotal * 1.1).toFixed(2))
+
+			const res = await fetch('/api/orders', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+					Authorization: `Bearer ${session.access_token}`,
+				},
+				body: JSON.stringify({ user_id: user.id, items, total_price }),
+			})
+
+			const json = await res.json()
+			if (!res.ok) throw new Error(json?.error?.message || 'Failed to place order')
+
+			setSuccess('Order placed successfully')
+			setCartItems([])
+		} catch (err) {
+			setError(err.message)
+		} finally {
+			setLoading(false)
+		}
+	}
+
 	return (
 		<div className="px-4 py-10 sm:px-6 lg:px-8">
 			<div className="mx-auto max-w-6xl">
@@ -126,8 +168,11 @@ function Cart() {
 									<span className="text-2xl font-bold text-amber-300">${(cartTotal * 1.1).toFixed(2)}</span>
 								</div>
 
-								<button className="mt-6 w-full rounded-full bg-gradient-to-r from-amber-300 to-amber-400 px-6 py-3.5 text-sm font-bold text-slate-950 transition duration-200 hover:shadow-lg hover:shadow-amber-500/40 hover:-translate-y-0.5 active:translate-y-0 flex items-center justify-center gap-2">
-									Proceed to checkout
+								{error && <div className="mt-4 text-sm text-red-400">{error}</div>}
+								{success && <div className="mt-4 text-sm text-amber-300">{success}</div>}
+
+								<button onClick={handleCheckout} disabled={loading} className="mt-6 w-full rounded-full bg-gradient-to-r from-amber-300 to-amber-400 px-6 py-3.5 text-sm font-bold text-slate-950 transition duration-200 hover:shadow-lg hover:shadow-amber-500/40 hover:-translate-y-0.5 active:translate-y-0 flex items-center justify-center gap-2">
+									{loading ? 'Placing order…' : 'Proceed to checkout'}
 									<ArrowRight className="h-4 w-4" />
 								</button>
 

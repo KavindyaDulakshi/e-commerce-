@@ -1,8 +1,17 @@
 import { supabase } from '../config/supabase.js'
 
+const DEFAULT_LIMIT = 24
+
 export async function getProducts(req, res, next) {
   try {
-    const { data, error } = await supabase.from('products').select('*')
+    const limit = parseInt(req.query.limit, 10) || DEFAULT_LIMIT
+    const offset = parseInt(req.query.offset, 10) || 0
+
+    const { data, error } = await supabase
+      .from('products')
+      .select('id, name, price, image_url')
+      .range(offset, offset + limit - 1)
+
     if (error) return next(error)
     res.json({ data })
   } catch (err) {
@@ -13,7 +22,7 @@ export async function getProducts(req, res, next) {
 export async function getProductById(req, res, next) {
   try {
     const { id } = req.params
-    const { data, error } = await supabase.from('products').select('*').eq('id', id).maybeSingle()
+    const { data, error } = await supabase.from('products').select('id, name, price, description, image_url').eq('id', id).maybeSingle()
     if (error) return next(error)
     res.json({ data })
   } catch (err) {
@@ -24,7 +33,7 @@ export async function getProductById(req, res, next) {
 export async function createProduct(req, res, next) {
   try {
     const payload = req.body
-    const { data, error } = await supabase.from('products').insert(payload).select().single()
+    const { data, error } = await supabase.from('products').insert(payload).select('id, name, price, image_url').single()
     if (error) return next(error)
     res.status(201).json({ data })
   } catch (err) {
@@ -36,7 +45,7 @@ export async function updateProduct(req, res, next) {
   try {
     const { id } = req.params
     const payload = req.body
-    const { data, error } = await supabase.from('products').update(payload).eq('id', id).select().maybeSingle()
+    const { data, error } = await supabase.from('products').update(payload).eq('id', id).select('id, name, price, image_url').maybeSingle()
     if (error) return next(error)
     res.json({ data })
   } catch (err) {

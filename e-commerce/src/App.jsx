@@ -8,6 +8,8 @@ import Deals from './pages/deals'
 import Contact from './pages/contact'
 import Cart from './pages/cart'
 import NotFound from './pages/notFound'
+import Login from './pages/auth/Login'
+import Signup from './pages/auth/Signup'
 
 function App() {
   return (
@@ -23,6 +25,8 @@ function App() {
           <Route path="/deals" element={<Deals />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/cart" element={<Cart />} />
+          	<Route path="/login" element={<Login />} />
+          	<Route path="/signup" element={<Signup />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </main>

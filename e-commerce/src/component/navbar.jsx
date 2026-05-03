@@ -1,6 +1,7 @@
-import { useState } from 'react'
-import { Link, NavLink } from 'react-router-dom'
+import { useState, useEffect } from 'react'
+import { Link, NavLink, useNavigate } from 'react-router-dom'
 import { Menu, Search, ShoppingBag, X, Heart, User, LogOut, LogIn } from 'lucide-react'
+import { supabase } from '../lib/supabaseClient'
 
 const navLinks = [
 	{ label: 'Home', to: '/' },
@@ -13,15 +14,61 @@ const navLinks = [
 function Navbar() {
 	const [isMenuOpen, setIsMenuOpen] = useState(false)
 	const [isSearchOpen, setIsSearchOpen] = useState(false)
+	const [searchTerm, setSearchTerm] = useState('')
 	const [isProfileOpen, setIsProfileOpen] = useState(false)
 	const [isLoggedIn, setIsLoggedIn] = useState(false)
+	const [userEmail, setUserEmail] = useState(null)
 	const [cartCount, setCartCount] = useState(3)
 	const [wishlistCount, setWishlistCount] = useState(2)
+	const navigate = useNavigate()
 
-	const handleLogout = () => {
+	const handleLogout = async () => {
+		await supabase.auth.signOut()
 		setIsLoggedIn(false)
+		setUserEmail(null)
 		setIsProfileOpen(false)
 	}
+
+	const handleSearchSubmit = (event) => {
+		event.preventDefault()
+		const query = searchTerm.trim()
+		if (!query) return
+		setIsSearchOpen(false)
+		setIsMenuOpen(false)
+		navigate(`/shop?q=${encodeURIComponent(query)}`)
+	}
+
+	useEffect(() => {
+		let mounted = true
+		async function checkSession() {
+			const { data } = await supabase.auth.getSession()
+			const session = data?.session
+			if (!mounted) return
+			if (session?.user) {
+				setIsLoggedIn(true)
+				setUserEmail(session.user.email)
+			} else {
+				setIsLoggedIn(false)
+				setUserEmail(null)
+			}
+		}
+		checkSession()
+
+		const { data: listener } = supabase.auth.onAuthStateChange((event, session) => {
+			if (session?.user) {
+				setIsLoggedIn(true)
+				setUserEmail(session.user.email)
+			} else {
+				setIsLoggedIn(false)
+				setUserEmail(null)
+			}
+		})
+
+		return () => {
+			mounted = false
+			listener.subscription.unsubscribe()
+		}
+	}, [])
 
 	return (
 		<header className="sticky top-0 z-50 border-b border-white/10 bg-slate-950/90 backdrop-blur-xl shadow-lg shadow-slate-950/20">
@@ -73,18 +120,27 @@ function Navbar() {
 							{/* Search Dropdown */}
 							{isSearchOpen && (
 								<div className="absolute right-0 mt-2 w-72 rounded-2xl border border-white/10 bg-slate-900 p-4 shadow-xl">
-									<input
-										type="text"
-										placeholder="Search products, furniture, decor..."
-										className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-sm text-white outline-none placeholder:text-slate-400 focus:border-amber-300 transition"
-										autoFocus
-									/>
+									<form onSubmit={handleSearchSubmit}>
+										<input
+											type="text"
+											placeholder="Search products, furniture, decor..."
+											className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-sm text-white outline-none placeholder:text-slate-400 focus:border-amber-300 transition"
+											value={searchTerm}
+											onChange={(event) => setSearchTerm(event.target.value)}
+											autoFocus
+										/>
+										<div className="mt-3 flex justify-end">
+											<button type="submit" className="rounded-full bg-amber-300 px-4 py-2 text-xs font-bold text-slate-950 transition hover:bg-amber-400">
+												Search
+											</button>
+										</div>
+									</form>
 									<div className="mt-3 space-y-2 text-xs text-slate-400">
 										<p className="font-semibold text-slate-300">Recent searches:</p>
 										<div className="flex flex-wrap gap-2">
-											<button className="rounded-full bg-white/5 px-3 py-1 hover:bg-white/10">Sofa</button>
-											<button className="rounded-full bg-white/5 px-3 py-1 hover:bg-white/10">Lighting</button>
-											<button className="rounded-full bg-white/5 px-3 py-1 hover:bg-white/10">Decor</button>
+											<button type="button" onClick={() => setSearchTerm('Sofa')} className="rounded-full bg-white/5 px-3 py-1 hover:bg-white/10">Sofa</button>
+											<button type="button" onClick={() => setSearchTerm('Lighting')} className="rounded-full bg-white/5 px-3 py-1 hover:bg-white/10">Lighting</button>
+											<button type="button" onClick={() => setSearchTerm('Decor')} className="rounded-full bg-white/5 px-3 py-1 hover:bg-white/10">Decor</button>
 										</div>
 									</div>
 								</div>
@@ -164,15 +220,15 @@ function Navbar() {
 										</>
 									) : (
 										<>
-											<button
-												onClick={() => setIsLoggedIn(true)}
+											<Link
+												to="/login"
 												className="flex w-full items-center gap-2 rounded-xl px-4 py-2 text-sm text-amber-300 hover:bg-white/10 transition font-semibold"
 											>
 												<LogIn className="h-4 w-4" />
 												Login
-											</button>
+											</Link>
 											<Link
-												to="/"
+												to="/signup"
 												className="block rounded-xl px-4 py-2 text-sm text-slate-200 hover:bg-white/10 transition"
 											>
 												Sign Up
@@ -223,12 +279,19 @@ function Navbar() {
 				{/* Mobile Search Bar */}
 				{isSearchOpen && (
 					<div className="mt-4 lg:hidden">
-						<input
-							type="text"
-							placeholder="Search products..."
-							className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-sm text-white outline-none placeholder:text-slate-400 focus:border-amber-300 transition"
-							autoFocus
-						/>
+							<form onSubmit={handleSearchSubmit} className="space-y-2">
+								<input
+									type="text"
+									placeholder="Search products..."
+									className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-sm text-white outline-none placeholder:text-slate-400 focus:border-amber-300 transition"
+									value={searchTerm}
+									onChange={(event) => setSearchTerm(event.target.value)}
+									autoFocus
+								/>
+								<button type="submit" className="w-full rounded-xl bg-amber-300 px-4 py-2 text-sm font-bold text-slate-950">
+									Search
+								</button>
+							</form>
 					</div>
 				)}
 

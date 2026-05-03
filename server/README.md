@@ -26,3 +26,14 @@ Notes
 
 - Tables `products` and `orders` should exist in your Supabase database.
 - For production, restrict server-side keys and use service roles carefully.
+
+Authentication & Supabase keys
+
+- Set `SUPABASE_URL` and one of `SUPABASE_SERVICE_ROLE_KEY` (recommended) or `SUPABASE_KEY` in your `.env` file.
+- The server will only allow server-side user creation (`/api/auth/signup`) if `SUPABASE_SERVICE_ROLE_KEY` is set.
+- Protected endpoints (`/api/orders`) require an `Authorization: Bearer <access_token>` header. Acquire tokens by signing in on the frontend with the Supabase client.
+
+Running and testing
+
+- Start the server: `npm run dev` inside the `server` folder.
+- Start the frontend and ensure `VITE_API_BASE` is set to the backend origin if different.
